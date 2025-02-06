@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ask Me Anything</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Ask Me Anything</h1>
+  <button id="askButton">Ask Me Anything</button>
+
+  <script>
+    const askButton = document.getElementById("askButton");
+    const scriptId = window.location.pathname.split("/").pop();
+
+    askButton.addEventListener("click", () => {
+      // Greet the user
+      const greeting = new SpeechSynthesisUtterance("Hi, how can I help you?");
+      window.speechSynthesis.speak(greeting);
+
+      // Start listening
+      setTimeout(() => {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.maxResults = 1;
+
+        recognition.onresult = async (event) => {
+          const question = event.results[0][0].transcript;
+          try {
+            const response = await fetch(`/process-speech/${scriptId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ question }),
+            });
+            const data = await response.json();
+            const answer = new SpeechSynthesisUtterance(data.answer);
+            window.speechSynthesis.speak(answer);
+          } catch (error) {
+            console.error("Error processing speech:", error);
+          }
+        };
+
+        recognition.onerror = (err) => {
+          console.error("Speech recognition error:", err);
+        };
+
+        recognition.start();
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

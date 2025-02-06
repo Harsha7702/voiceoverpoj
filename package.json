@@ -1,0 +1,18 @@
+{
+  "name": "voice-qna-backend",
+  "version": "1.0.0",
+  "description": "Voice Q&A Backend",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "multer": "^1.4.5-lts.1",
+    "voice-qna-backend": "file:",
+    "xlsx": "^0.18.5"
+  }
+}
